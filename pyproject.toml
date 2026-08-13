@@ -1,0 +1,30 @@
+[project]
+name = "django-wechat-shop"
+version = "1.0.0"
+description = "Django DRF backend for a WeChat mini program shop"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2,<6.0",
+    "django-filter>=25.1",
+    "django-redis>=6.0",
+    "djangorestframework>=3.16",
+    "djangorestframework-simplejwt>=5.5",
+    "gunicorn>=23.0",
+    "pillow>=11.0",
+    "pymysql>=1.1",
+    "python-dotenv>=1.1",
+    "requests>=2.32",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
