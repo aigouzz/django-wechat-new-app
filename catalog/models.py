@@ -1,5 +1,6 @@
 from django.db import models
 from uuid_extensions import uuid7 as uuid7_factory
+from accounts.models import User
 
 
 def generate_uuid7():
@@ -52,7 +53,7 @@ class JDProduct(models.Model):
     #     editable=False,
     #     verbose_name="商品UUID",
     # )
-    categoryInfo = models.JSONField(default=dict, blank=True, verbose_name="类目信息")
+    # categoryInfo = models.JSONField(default=dict, blank=True, verbose_name="类目信息")
     comments = models.IntegerField(verbose_name="评论数")
     commissionInfo = models.JSONField(default=dict, blank=True, verbose_name="佣金信息")
     couponInfo = models.JSONField(default=dict, blank=True, verbose_name="优惠券信息")
@@ -99,6 +100,13 @@ class JDProduct(models.Model):
     itemId = models.CharField(max_length=128, blank=True, db_index=True, verbose_name="联盟商品ID")
     skuTagList = models.JSONField(default=list, blank=True, verbose_name="联盟标签")
     specialSkuUrlInfo = models.JSONField(default=dict, blank=True, verbose_name="频道页信息")
+    cid1 = models.IntegerField(verbose_name='一级类目id')
+    cid1Name = models.CharField(max_length=100, verbose_name='一级类目')
+    cid2 = models.IntegerField(verbose_name='二级类目id')
+    cid2Name = models.CharField(max_length=100, verbose_name='二级类目')
+    cid3 = models.IntegerField(verbose_name='三级类目id')
+    cid3Name = models.CharField(max_length=100, verbose_name='三级类目')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='商品价格')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
@@ -116,3 +124,17 @@ class Channel(models.Model): # 分类
     name = models.CharField(max_length=48, verbose_name='类目名称')
     grade = models.SmallIntegerField( verbose_name='类目级别(类目级别 0，1，2 代表一、二、三级类目)')
     parentId = models.IntegerField( verbose_name='主类目id')
+    class Meta:
+        verbose_name = "京东商品分类"
+        verbose_name_plural = verbose_name
+class Course(models.Model):
+    name = models.CharField(max_length=64, verbose_name='课程名')
+    price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='价格')
+    detail = models.TextField(verbose_name='描述')
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='course')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    class Meta:
+        verbose_name = "课程"
+        verbose_name_plural = verbose_name
+    

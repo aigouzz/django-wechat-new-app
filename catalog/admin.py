@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Product, JDProduct
+from .models import Category, Product, JDProduct, Course
 
 
 @admin.register(Category)
@@ -18,6 +18,11 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(JDProduct)
 class JDProductAdmin(admin.ModelAdmin):
-    list_display = ("skuId", "skuName", "priceInfo", "shopInfo", "categoryInfo")
+    list_display = ("skuId", "skuName", "priceInfo", "shopInfo", "cid1", 'cid2', 'cid3', 'price', 'commissionInfo')
     search_fields = ("skuName",)
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "teacher", "price", 'detail', 'created_at')
+    search_fields = ("name",)
 
