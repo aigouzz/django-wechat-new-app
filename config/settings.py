@@ -133,3 +133,24 @@ WECHAT_MOCK_LOGIN = os.getenv("WECHAT_MOCK_LOGIN", "true").lower() == "true"
 WECHAT_APP_ID = os.getenv("WECHAT_APP_ID", "")
 WECHAT_APP_SECRET = os.getenv("WECHAT_APP_SECRET", "")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# celelry配置
+CELERY_BROKER_URL = f"redis://{os.getenv("REDIS_HOST")}:6379/0"
+CELERY_RESULT_BACKEND = f"redis://{os.getenv("REDIS_HOST")}:6379/1"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Shanghai"
+#防止任务丢失
+CELERY_TASK_ACKS_LATE = True
+#失败重试
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+
+#邮件
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'  #用于发送电子邮件的主机,163的服务器
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False  #是否开启加密传输
+EMAIL_USE_SSL = True

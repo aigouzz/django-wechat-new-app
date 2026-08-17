@@ -1,9 +1,18 @@
+import json
+import os
+
+from dotenv import load_dotenv
 from rest_framework.permissions import AllowAny
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
+
+import jd.api
+from common.exceptions import api_response
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
+from utils.tasks import send_email
 
+load_dotenv()
 
 class CategoryViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
@@ -20,3 +29,28 @@ class ProductViewSet(ReadOnlyModelViewSet):
     ordering_fields = ("price", "sales", "created_at")
     queryset = Product.objects.select_related("category").filter(is_active=True)
 
+class GetProductViewSet(ViewSet):
+    """从京东联盟拉取商品；不对应本地数据库模型。"""
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        jd.setDefaultAppInfo(os.environ['APP_KEY'], os.environ['SECRET_KEY'])
+        a = jd.api.UnionOpenGoodsJingfenQueryRequest()
+        a.goodsReq = {
+            'eliteId': 22,
+            'pageIndex': 1,
+            'sortName': 'goodComments'
+        }
+        f = a.getResponse(os.environ['RIGHT_KEY'])
+        result = f.get('jd_union_open_goods_jingfen_query_responce').get('queryResult').get('data', [])
+        for i in result:
+            pass
+        data = {}
+        return api_response(data=data)
+
+class RegisterViewSet(ViewSet):
+    """发送邮件"""
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        pass

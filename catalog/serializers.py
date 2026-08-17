@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Product
+from .models import Category, Product, JDProduct
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -15,4 +15,9 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ("id", "category", "category_name", "name", "description", "image_url", "price", "stock", "sales")
+
+class GetProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JDProduct
+        fields = ["skuId", "skuName", "priceInfo"]
 
