@@ -25,5 +25,5 @@ class CourseSerializer(serializers.ModelSerializer):
     teacher = serializers.ReadOnlyField(source="teacher.nickname")
     class Meta:
         model = Course
-        fields = ['name', 'price', 'detail', 'teacher', 'created_at', 'updated_at']
+        fields = ['id','name', 'price', 'detail', 'teacher', 'created_at', 'updated_at']
 

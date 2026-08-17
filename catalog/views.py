@@ -3,9 +3,9 @@ import os
 
 from dotenv import load_dotenv
 from rest_framework.permissions import AllowAny
-from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet, ModelViewSet
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, mixins
 from rest_framework.decorators import api_view, APIView
 
 import jd.api
@@ -72,83 +72,9 @@ class RegisterViewSet(ViewSet):
     def list(self, request):
         pass
 
-lists1 = {
-    'name': 'jd',
-    'price': 11.7,
-    'created_at': '2026-12-22 12:33:22'
-}
+class CourseViewSet(ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
 
-# @api_view(['GET', 'POST'])
-# def course_list(request):
-#     if request.method == 'GET':
-#         s = CourseSerializer(instance=Course.objects.all(), many=True)
-#         return Response(data=s.data, status=status.HTTP_200_OK)
-#     else:
-#         s = CourseSerializer(data=request.data) # 部分更新 partial=True
-#         if s.is_valid():
-#             s.save(teacher=request.user)
-#             return Response(data=s.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def course_detail(request, pk):
-#     try:
-#         course = Course.objects.get(pk=pk)
-#     except Course.DoesNotExist:
-#         return Response(data={"msg": "没有这个课程信息"}, status=status.HTTP_404_NOT_FOUND)
-#     if request.method == 'GET':
-#         s = CourseSerializer(instance=course)
-#         return Response(data=s.data, status=status.HTTP_200_OK)
-#     elif request.method == 'PUT':
-#         s = CourseSerializer(instance=course, data=request.data)
-#         if s.is_valid():
-#             s.save()
-#             return Response(data=s.data, status=status.HTTP_200_OK)
-#         return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-#     elif request.method == 'DELETE':
-#         course.delete()
-#         return Response(data={'msg': "ok"}, status=status.HTTP_200_OK)
-#     else:
-#         return Response(data={"msg": "不允许这种请求"}, status=status.HTTP_400_BAD_REQUEST) 
-
-class CourseList(APIView):
-    def get(self, request):
-        queryset = Course.objects.all()
-        s = CourseSerializer(instance=queryset, many=True)
-        return Response(data=s.data, status=status.HTTP_200_OK)
-    def post(self, request):
-        s = CourseSerializer(data=request.data)
-        if s.is_valid():
-            s.save(teacher=self.request.user)
-            print(request.data, s.data)
-            return Response(data=s.data, status=status.HTTP_200_OK)
-        return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class CourseDetail(APIView):
-    def get_object(self, pk):
-        try:
-            return Course.objects.get(pk=pk)
-        except Course.DoesNotExist:
-            return 
-    def get(self, request, pk):
-        obj = self.get_object(pk)
-        if not obj:
-            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
-        s = CourseSerializer(instance=obj)
-        return Response(data=s.data, status=status.HTTP_200_OK)
-    def put(self, request, pk):
-        obj = self.get_object(pk)
-        if not obj:
-            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
-        s = CourseSerializer(instance=obj, data=request.data)
-        if s.is_valid():
-            s.save()
-            return Response(data=s.data, status=status.HTTP_200_OK)
-        return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-    def delete(self, request, pk):
-        obj = self.get_object(pk)
-        if not obj:
-            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
-        obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
