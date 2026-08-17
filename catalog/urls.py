@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
 
-from .views import CategoryViewSet, ProductViewSet, GetProductViewSet, CourseList #course_list, course_detail
+from .views import CategoryViewSet, ProductViewSet, GetProductViewSet, CourseList, CourseDetail #course_list, course_detail
 
 router = DefaultRouter()
 router.register("categories", CategoryViewSet, basename="category")
@@ -14,6 +14,7 @@ paths = [
     # path('course_list/', course_list),
     # path('course_detail/<int:pk>/', course_detail),
     # path('course_list_all/', course_list_all.as_view(), name='course_list_all'),
-    path("courseList/", CourseList.as_view(), name="courseList")
+    path("courseList/", CourseList.as_view(), name="courseList"),
+    path("courseDetail/<int:pk>/", CourseDetail.as_view(), name="courseDetail"),
 ]
 urlpatterns = router.urls + paths

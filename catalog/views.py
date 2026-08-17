@@ -121,6 +121,34 @@ class CourseList(APIView):
         s = CourseSerializer(data=request.data)
         if s.is_valid():
             s.save(teacher=self.request.user)
-            print(type(request.data), type(s.data))
+            print(request.data, s.data)
             return Response(data=s.data, status=status.HTTP_200_OK)
         return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CourseDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Course.objects.get(pk=pk)
+        except Course.DoesNotExist:
+            return 
+    def get(self, request, pk):
+        obj = self.get_object(pk)
+        if not obj:
+            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
+        s = CourseSerializer(instance=obj)
+        return Response(data=s.data, status=status.HTTP_200_OK)
+    def put(self, request, pk):
+        obj = self.get_object(pk)
+        if not obj:
+            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
+        s = CourseSerializer(instance=obj, data=request.data)
+        if s.is_valid():
+            s.save()
+            return Response(data=s.data, status=status.HTTP_200_OK)
+        return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk):
+        obj = self.get_object(pk)
+        if not obj:
+            return Response(data={"msg": "没有这个课程"}, status=status.HTTP_404_NOT_FOUND)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
