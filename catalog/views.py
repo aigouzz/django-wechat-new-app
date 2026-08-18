@@ -1,8 +1,10 @@
-import json
+import json, time
 import os
 
 from dotenv import load_dotenv
 from django.core.paginator import EmptyPage, InvalidPage, Page
+from django.core.cache import cache
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet, ModelViewSet
@@ -16,9 +18,10 @@ from common.exceptions import api_response
 from .models import Category, Product, JDProduct, Course
 from .serializers import CategorySerializer, ProductSerializer, JDProductSerializer, CourseSerializer
 from .permissions import IsOwnerReadOnly
+from accounts.models import User
 from utils.tasks import send_email
 
-load_dotenv()
+load_dotenv('../.env.pro')
 
 
 class CoursePagination(pagination.PageNumberPagination):
@@ -138,3 +141,17 @@ class CourseViewSet(ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+@api_view(["post"])
+def logout(request):
+    token = request.headers.get("Authorization")
+    if token:
+        token_next = token.split(' ')[1]
+    access_token = AccessToken(token=token_next)
+    user_id = access_token['user_id']
+    expire_time = access_token.payload.get('exp')
+    user_obj = User.objects.get(id=user_id)
+    key = f'user_manage:logout:{user_obj.nickname}:expire_token'
+    tem_info = {"token": token_next, "expire_time": expire_time}
+    cache.set(key, json.dumps(tem_info))
+    return Response(data={"code": "200", "data": {}, "message": "log outok"}, status=status.HTTP_200_OK)
