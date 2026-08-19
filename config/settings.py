@@ -121,6 +121,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ],
     "EXCEPTION_HANDLER": "common.exceptions.api_exception_handler",
+    # "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema"
 }
 
 SIMPLE_JWT = {

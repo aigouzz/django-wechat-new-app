@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.schemas import get_schema_view
+from rest_framework.permissions import AllowAny
 
 urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
